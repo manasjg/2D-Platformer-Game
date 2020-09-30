@@ -1,16 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Player
 {
     public class PlayerController : MonoBehaviour
     {
-        public Animator animator;
-        public BoxCollider2D StandingCollider;
-        public BoxCollider2D SittingCollider;
+        [SerializeField]
+        private Animator animator;
+        [SerializeField]
+        private BoxCollider2D StandingCollider, SittingCollider;
+        [SerializeField]
+        private float speedX,jumpForce;
+       
         bool resetCollider = false;
-      
+        bool jumpFlag = false;
+        bool isGrounded = false;
+        Rigidbody2D rb2d;
+
+
+        private void Start()
+        {
+            rb2d = GetComponent<Rigidbody2D>();
+        }
         private void FixedUpdate()
         {
             if (resetCollider)
@@ -27,28 +37,51 @@ namespace Player
                 }
                 resetCollider = false;
             }
+            if (jumpFlag)
+            {
+                rb2d.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+                jumpFlag = false;
+            }
         }
 
         void Update()
         {
-            float speed = Input.GetAxisRaw("Horizontal");
-            animator.SetFloat("Speed",Mathf.Abs( speed));
+            float horizontal = Input.GetAxisRaw("Horizontal");
+            float vertical = Input.GetAxisRaw("Vertical");
+            HandlePlayerAnimation(horizontal, vertical);
+            HandlePlayerMovement(horizontal, vertical);
+        }
+
+        void HandlePlayerMovement(float horizontal,float vertical)
+        {
+            transform.position += new Vector3(horizontal * speedX * Time.deltaTime, 0,0);
+            if (vertical > 0 && isGrounded)
+            {
+                isGrounded = false;
+                jumpFlag = true;
+            }
+
+        }
+            
+        void HandlePlayerAnimation(float horizontal,float vertical)
+        {
+            animator.SetFloat("Speed", Mathf.Abs(horizontal));
             Vector3 scale = transform.localScale;
-            if (speed < 0)
+            if (horizontal < 0)
             {
                 scale.x = -1f * Mathf.Abs(scale.x);
             }
-            else if(speed>0)
+            else if (horizontal > 0)
             {
                 scale.x = Mathf.Abs(scale.x);
             }
             transform.localScale = scale;
-            float jump = Input.GetAxisRaw("Vertical");
-            if (jump > 0)
+            
+            if (vertical > 0)
             {
-                animator.SetBool("Jump",true);
+                animator.SetBool("Jump", true);
             }
-            else
+            else if(isGrounded)
             {
                 animator.SetBool("Jump", false);
             }
@@ -64,6 +97,11 @@ namespace Player
                 animator.SetBool("Crouch", false);
                 resetCollider = true;
             }
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            isGrounded = true;
         }
     }
 }
