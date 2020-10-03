@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Player
 {
@@ -63,6 +64,7 @@ namespace Player
             }
 
         }
+
             
         void HandlePlayerAnimation(float horizontal,float vertical)
         {
@@ -109,6 +111,18 @@ namespace Player
         public void PickupKey()
         {
             scoreController.IncrementScore(10);
+        }
+        public void KillPlayer()
+        {
+           
+            animator.SetTrigger("Death");
+          
+        }
+        public void ReloadScene()
+        {
+            StandingCollider.enabled = false;
+            SittingCollider.enabled = false;
+            SceneManager.LoadScene(0);
         }
     }
 }

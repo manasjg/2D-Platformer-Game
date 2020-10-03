@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Triggers
 {
@@ -7,7 +8,7 @@ namespace Triggers
         private void OnTriggerEnter2D(Collider2D collision)
         {
             if (collision.CompareTag("Player"))
-                Debug.Log("Game Over");
+                SceneManager.LoadScene(0);
         }
     }
 }
