@@ -10,7 +10,8 @@ namespace Player
         private BoxCollider2D StandingCollider, SittingCollider;
         [SerializeField]
         private float speedX,jumpForce;
-       
+        [SerializeField]
+        private ScoreController scoreController;
         bool resetCollider = false;
         bool jumpFlag = false;
         bool isGrounded = false;
@@ -103,6 +104,11 @@ namespace Player
         {
             if(collision.gameObject.CompareTag("Ground"))
             isGrounded = true;
+        }
+
+        public void PickupKey()
+        {
+            scoreController.IncrementScore(10);
         }
     }
 }
