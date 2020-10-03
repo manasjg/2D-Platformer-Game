@@ -114,9 +114,7 @@ namespace Player
         }
         public void KillPlayer()
         {
-           
             animator.SetTrigger("Death");
-          
         }
         public void ReloadScene()
         {
