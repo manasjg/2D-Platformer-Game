@@ -13,16 +13,21 @@ namespace Player
         private float speedX,jumpForce;
         [SerializeField]
         private ScoreController scoreController;
+        [SerializeField]
+        private float reviveTime;
         bool resetCollider = false;
         bool jumpFlag = false;
         bool isGrounded = false;
         Rigidbody2D rb2d;
-
+        bool isRevived = false;
+        float reviveTimer = 0;
         bool isAlive = true;
+        SpriteRenderer spriteRenderer;
 
         private void Start()
         {
             rb2d = GetComponent<Rigidbody2D>();
+            spriteRenderer = GetComponent<SpriteRenderer>();
         }
         private void FixedUpdate()
         {
@@ -55,6 +60,20 @@ namespace Player
                 float vertical = Input.GetAxisRaw("Vertical");
                 HandlePlayerAnimation(horizontal, vertical);
                 HandlePlayerMovement(horizontal, vertical);
+            }
+            if (isRevived)
+            {
+                if (reviveTimer < reviveTime)
+                {
+                    reviveTimer += Time.deltaTime;
+                }
+                else
+                {
+                    spriteRenderer.color = new Color(1, 1, 1, 1);
+                    Physics2D.IgnoreLayerCollision(8, 9,false);
+                    isRevived = false;
+                    reviveTimer = 0;
+                }
             }
         }
 
@@ -112,6 +131,7 @@ namespace Player
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
+            
             if (collision.gameObject.CompareTag("Ground"))
             {
                 isGrounded = true;
@@ -126,14 +146,18 @@ namespace Player
         {
             animator.SetBool("Crouch", false);
             animator.SetBool("Jump", false);
-            animator.SetTrigger("Death");
+            animator.SetBool("Death",true);
             isAlive = false;
         }
-        public void SetGameOver()
+        public void ReduceLives()
         {
-            StandingCollider.enabled = false;
-            SittingCollider.enabled = false;
-            GameManager.GM.SetGameOverPanel();
+            animator.SetBool("Death", false);
+            spriteRenderer.color = new Color(1, 1, 1, 0.5f);
+            Physics2D.IgnoreLayerCollision(8, 9, true);
+            isRevived = true;
+            isAlive = true;
+            reviveTimer = 0;
+            GameManager.GM.ReduceLives();
         }
     }
 }

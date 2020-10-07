@@ -8,12 +8,17 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     GameObject GOPanel;
     [SerializeField]
-    Button RestartButton;
+    Button restartButton;
+    [SerializeField]
+    int lives;
+    [SerializeField]
+    GameObject[] Hearts;
+
     // Start is called before the first frame update
     void Start()
     {
         GM = this;
-        RestartButton.onClick.AddListener(RestartScene);
+        restartButton.onClick.AddListener(RestartScene);
     }
 
    void RestartScene()
@@ -21,6 +26,20 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex) ;
     }
 
+
+    public void ReduceLives()
+    {
+        lives--;
+       
+        if (lives == 0)
+        {
+            SetGameOverPanel();
+        }
+        else
+        {
+            Hearts[lives].SetActive(false);
+        }
+    }
     public void SetGameOverPanel ()
     {
         GOPanel.SetActive(true);
