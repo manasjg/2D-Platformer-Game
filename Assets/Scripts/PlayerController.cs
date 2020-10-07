@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+
 
 namespace Player
 {
@@ -116,11 +116,11 @@ namespace Player
         {
             animator.SetTrigger("Death");
         }
-        public void ReloadScene()
+        public void SetGameOver()
         {
             StandingCollider.enabled = false;
             SittingCollider.enabled = false;
-            SceneManager.LoadScene(0);
+            GameManager.GM.SetGameOverPanel();
         }
     }
 }
