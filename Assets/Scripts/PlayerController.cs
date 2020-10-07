@@ -18,6 +18,7 @@ namespace Player
         bool isGrounded = false;
         Rigidbody2D rb2d;
 
+        bool isAlive = true;
 
         private void Start()
         {
@@ -48,10 +49,13 @@ namespace Player
 
         void Update()
         {
-            float horizontal = Input.GetAxisRaw("Horizontal");
-            float vertical = Input.GetAxisRaw("Vertical");
-            HandlePlayerAnimation(horizontal, vertical);
-            HandlePlayerMovement(horizontal, vertical);
+            if (isAlive)
+            {
+                float horizontal = Input.GetAxisRaw("Horizontal");
+                float vertical = Input.GetAxisRaw("Vertical");
+                HandlePlayerAnimation(horizontal, vertical);
+                HandlePlayerMovement(horizontal, vertical);
+            }
         }
 
         void HandlePlayerMovement(float horizontal,float vertical)
@@ -70,21 +74,25 @@ namespace Player
         {
             animator.SetFloat("Speed", Mathf.Abs(horizontal));
             Vector3 scale = transform.localScale;
+
             if (horizontal < 0)
             {
                 scale.x = -1f * Mathf.Abs(scale.x);
+                animator.SetBool("Crouch", false);
             }
             else if (horizontal > 0)
             {
                 scale.x = Mathf.Abs(scale.x);
+                animator.SetBool("Crouch", false);
+               
             }
             transform.localScale = scale;
-            
+
             if (vertical > 0)
             {
                 animator.SetBool("Jump", true);
             }
-            else if(isGrounded)
+            if (isGrounded)
             {
                 animator.SetBool("Jump", false);
             }
@@ -104,8 +112,10 @@ namespace Player
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if(collision.gameObject.CompareTag("Ground"))
-            isGrounded = true;
+            if (collision.gameObject.CompareTag("Ground"))
+            {
+                isGrounded = true;
+            }
         }
 
         public void PickupKey()
@@ -114,7 +124,10 @@ namespace Player
         }
         public void KillPlayer()
         {
+            animator.SetBool("Crouch", false);
+            animator.SetBool("Jump", false);
             animator.SetTrigger("Death");
+            isAlive = false;
         }
         public void SetGameOver()
         {
