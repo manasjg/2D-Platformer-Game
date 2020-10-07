@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 namespace Player
 {
@@ -17,7 +17,7 @@ namespace Player
         bool jumpFlag = false;
         bool isGrounded = false;
         Rigidbody2D rb2d;
-        bool isAlive = true;
+
 
         private void Start()
         {
@@ -48,13 +48,10 @@ namespace Player
 
         void Update()
         {
-            if (isAlive)
-            {
-                float horizontal = Input.GetAxisRaw("Horizontal");
-                float vertical = Input.GetAxisRaw("Vertical");
-                HandlePlayerAnimation(horizontal, vertical);
-                HandlePlayerMovement(horizontal, vertical);
-            }
+            float horizontal = Input.GetAxisRaw("Horizontal");
+            float vertical = Input.GetAxisRaw("Vertical");
+            HandlePlayerAnimation(horizontal, vertical);
+            HandlePlayerMovement(horizontal, vertical);
         }
 
         void HandlePlayerMovement(float horizontal,float vertical)
@@ -71,52 +68,44 @@ namespace Player
             
         void HandlePlayerAnimation(float horizontal,float vertical)
         {
-           
-                animator.SetFloat("Speed", Mathf.Abs(horizontal));
-                Vector3 scale = transform.localScale;
-
-                if (horizontal < 0)
-                {
-                    scale.x = -1f * Mathf.Abs(scale.x);
-                animator.SetBool("Crouch", false);
+            animator.SetFloat("Speed", Mathf.Abs(horizontal));
+            Vector3 scale = transform.localScale;
+            if (horizontal < 0)
+            {
+                scale.x = -1f * Mathf.Abs(scale.x);
             }
-                else if (horizontal > 0)
-                {
-                    scale.x = Mathf.Abs(scale.x);
-                animator.SetBool("Crouch", false);
+            else if (horizontal > 0)
+            {
+                scale.x = Mathf.Abs(scale.x);
             }
-                transform.localScale = scale;
-
-                if (vertical > 0)
-                {
-                    animator.SetBool("Jump", true);
-                }
-                if (isGrounded)
-                {
-                    animator.SetBool("Jump", false);
-                }
-
-                if (Input.GetKeyDown(KeyCode.LeftControl))
-                {
-                    animator.SetBool("Crouch", true);
-                    resetCollider = true;
-                }
-
-                if (Input.GetKeyUp(KeyCode.LeftControl))
-                {
-                    animator.SetBool("Crouch", false);
-                    resetCollider = true;
-                }
+            transform.localScale = scale;
             
+            if (vertical > 0)
+            {
+                animator.SetBool("Jump", true);
+            }
+            else if(isGrounded)
+            {
+                animator.SetBool("Jump", false);
+            }
+
+            if (Input.GetKeyDown(KeyCode.LeftControl))
+            {
+                animator.SetBool("Crouch", true);
+                resetCollider = true;
+            }
+
+            if (Input.GetKeyUp(KeyCode.LeftControl))
+            {
+                animator.SetBool("Crouch", false);
+                resetCollider = true;
+            }
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.gameObject.CompareTag("Ground"))
-            {
-                isGrounded = true;
-            }
-           
+            if(collision.gameObject.CompareTag("Ground"))
+            isGrounded = true;
         }
 
         public void PickupKey()
@@ -125,16 +114,13 @@ namespace Player
         }
         public void KillPlayer()
         {
-            animator.SetBool("Crouch", false);
-            animator.SetBool("Jump", false);
             animator.SetTrigger("Death");
-            isAlive = false;
         }
-        public void ShowGameOverPanel()
+        public void ReloadScene()
         {
-       
-            GameManager.GM.SetGameOverPanel();
+            StandingCollider.enabled = false;
+            SittingCollider.enabled = false;
+            SceneManager.LoadScene(0);
         }
-        
     }
 }
