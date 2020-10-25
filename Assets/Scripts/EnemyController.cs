@@ -7,7 +7,7 @@ namespace Player {
         [SerializeField]
         private float walkSpeed;
         [SerializeField]
-        public bool canReverseDirection;
+        private bool canReverseDirection;
 
         private void Update()
         {

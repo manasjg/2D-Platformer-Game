@@ -10,7 +10,7 @@ namespace Player
         [SerializeField]
         private BoxCollider2D StandingCollider, SittingCollider;
         [SerializeField]
-        private float speedX,jumpForce;
+        private float speedX, jumpForce;
         [SerializeField]
         private ScoreController scoreController;
         [SerializeField]
@@ -23,6 +23,7 @@ namespace Player
         float reviveTimer = 0;
         bool isAlive = true;
         SpriteRenderer spriteRenderer;
+        float horizontal, vertical;
 
         private void Start()
         {
@@ -56,8 +57,7 @@ namespace Player
         {
             if (isAlive)
             {
-                float horizontal = Input.GetAxisRaw("Horizontal");
-                float vertical = Input.GetAxisRaw("Vertical");
+                HandlePlayerInput();
                 HandlePlayerAnimation(horizontal, vertical);
                 HandlePlayerMovement(horizontal, vertical);
             }
@@ -70,26 +70,37 @@ namespace Player
                 else
                 {
                     spriteRenderer.color = new Color(1, 1, 1, 1);
-                    Physics2D.IgnoreLayerCollision(8, 9,false);
+                    Physics2D.IgnoreLayerCollision(8, 9, false);
                     isRevived = false;
                     reviveTimer = 0;
                 }
             }
         }
 
-        void HandlePlayerMovement(float horizontal,float vertical)
+        void HandlePlayerInput()
         {
-            transform.position += new Vector3(horizontal * speedX * Time.deltaTime, 0,0);
+            horizontal = Input.GetAxisRaw("Horizontal");
+            vertical = Input.GetAxisRaw("Vertical");
+        }
+
+        void HandlePlayerMovement(float horizontal, float vertical)
+        {
+            transform.position += new Vector3(horizontal * speedX * Time.deltaTime, 0, 0);
             if (vertical > 0 && isGrounded)
             {
                 isGrounded = false;
                 jumpFlag = true;
+                PlaySound(SoundTypesSfx.PlayerJump);
             }
 
+
+        }
+        void PlaySound(SoundTypesSfx sfxType)
+        {
+            SoundManager.Instance.PlayEffect(sfxType);
         }
 
-            
-        void HandlePlayerAnimation(float horizontal,float vertical)
+        void HandlePlayerAnimation(float horizontal, float vertical)
         {
             animator.SetFloat("Speed", Mathf.Abs(horizontal));
             Vector3 scale = transform.localScale;
@@ -103,7 +114,7 @@ namespace Player
             {
                 scale.x = Mathf.Abs(scale.x);
                 animator.SetBool("Crouch", false);
-               
+
             }
             transform.localScale = scale;
 
@@ -131,7 +142,7 @@ namespace Player
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            
+
             if (collision.gameObject.CompareTag("Ground"))
             {
                 isGrounded = true;
@@ -146,7 +157,8 @@ namespace Player
         {
             animator.SetBool("Crouch", false);
             animator.SetBool("Jump", false);
-            animator.SetBool("Death",true);
+            animator.SetBool("Death", true);
+            SoundManager.Instance.PlayEffect(SoundTypesSfx.PlayerDeath);
             isAlive = false;
         }
         public void ReduceLives()

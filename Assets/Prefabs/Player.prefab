@@ -169,6 +169,7 @@ MonoBehaviour:
   speedX: 4
   jumpForce: 5
   scoreController: {fileID: 0}
+  reviveTime: 0
 --- !u!61 &2177087697223397282
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -205,7 +206,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2177087697786755599}
   - component: {fileID: 2177087697786755596}
-  - component: {fileID: 2177087697786755597}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -269,11 +269,3 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &2177087697786755597
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2177087697786755634}
-  m_Enabled: 1

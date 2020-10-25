@@ -5,7 +5,7 @@ using UnityEngine;
 public class LevelManager : MonoBehaviour
 {
     static LevelManager instance;
-    public static LevelManager Instance { get { return instance; }  }
+    public static LevelManager Instance { get { return instance; } }
 
     [SerializeField]
     string[] Levels;
@@ -31,20 +31,24 @@ public class LevelManager : MonoBehaviour
         Scene currScene = SceneManager.GetActiveScene();
         int index = Array.FindIndex(Levels, level => level == currScene.name);
         SetLevelStatus(currScene.name, LevelState.Completed);
-        Debug.Log("Completed " + currScene.name);
-        if (index+1 < Levels.Length)
+        LoadNextScene(index);
+    }
+
+    void LoadNextScene(int currIndex)
+    {
+        if (currIndex + 1 < Levels.Length)
         {
-            SetLevelStatus(Levels[index+1], LevelState.Unlocked);
+            SetLevelStatus(Levels[currIndex + 1], LevelState.Unlocked);
+            SceneManager.LoadScene(currIndex + 2);
         }
-        
     }
 
     public LevelState GetLevelStatus(string LevelName)
     {
         return (LevelState)PlayerPrefs.GetInt(LevelName);
     }
-    public void SetLevelStatus(string LevelName,LevelState state)
+    public void SetLevelStatus(string LevelName, LevelState state)
     {
-       PlayerPrefs.SetInt(LevelName,(int)state);
+        PlayerPrefs.SetInt(LevelName, (int)state);
     }
 }
